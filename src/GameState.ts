@@ -1,3 +1,4 @@
+import { controlBar } from './ControlBar'
 import { Defender } from './Defender'
 import { Enemy } from './Enemy'
 import { FloatingMessage } from './FloatingMessage'
@@ -25,5 +26,9 @@ export class GameState {
   constructor({ scoreToWin, enemiesInterval }: { scoreToWin: number; enemiesInterval: number }) {
     this.scoreToWin = scoreToWin
     this.enemiesInterval = enemiesInterval
+  }
+
+  handleControlBar() {
+    controlBar.draw(this.score, this.scoreToWin, this.resourcesCount)
   }
 }
