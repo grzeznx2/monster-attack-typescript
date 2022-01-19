@@ -28,4 +28,27 @@ export class FloatingMessage {
       canvas.ctx.globalAlpha = 1
     }
   }
+
+  private updateHealth(value: number) {
+    this.health += value
+  }
+
+  private updateX(value: number) {
+    this.x += value
+  }
+
+  private updateY(value: number) {
+    this.y += value
+  }
+
+  update() {
+    this.move({ deltaY: -0.3 })
+    this.updateHealth(-1)
+    if (this.opacity > 0.02) this.opacity -= 0.02
+  }
+
+  move({ deltaX, deltaY }: { deltaX?: number; deltaY?: number }) {
+    if (deltaX) this.updateX(deltaX)
+    if (deltaY) this.updateY(deltaY)
+  }
 }
