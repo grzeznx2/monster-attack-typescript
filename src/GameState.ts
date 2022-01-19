@@ -1,3 +1,4 @@
+import { canvas } from './Canvas'
 import { CELL_SIZE, GAP_SIZE } from './Cell'
 import { controlBar } from './ControlBar'
 import { Defender } from './Defender'
@@ -17,7 +18,7 @@ export class GameState {
   defenders: Defender[] = []
   enemies: Enemy[] = []
   enemiesInterval: number
-  enemiesPositions: number[] = []
+  enemyPositions: number[] = []
   floatingMessages: FloatingMessage[] = []
   resources: Resource[] = []
   resourcesCount: number = 0
@@ -29,6 +30,27 @@ export class GameState {
   constructor({ scoreToWin, enemiesInterval }: { scoreToWin: number; enemiesInterval: number }) {
     this.scoreToWin = scoreToWin
     this.enemiesInterval = enemiesInterval
+
+    canvas.element!.addEventListener('click', e => {
+      const gridPositionX = mouse.x - (mouse.x % CELL_SIZE) + GAP_SIZE
+      const gridPositionY = mouse.y - (mouse.y % CELL_SIZE) + GAP_SIZE
+
+      if (gridPositionY < CELL_SIZE) return
+
+      for (let defender of this.defenders) {
+        if (defender.x === gridPositionX && defender.y === gridPositionY) return
+      }
+
+      let defenderCost = 100
+      if (this.resourcesCount >= defenderCost) {
+        this.defenders.push(new Defender(gridPositionX, gridPositionY))
+        this.resourcesCount -= defenderCost
+      } else {
+        this.floatingMessages.push(
+          new FloatingMessage('not enough resources', mouse.x, mouse.y, 15, 'red')
+        )
+      }
+    })
   }
 
   get timeForEnemy() {
@@ -61,13 +83,33 @@ export class GameState {
     if (this.shouldProduceEnemy) {
       const verticalPosition = Math.floor(Math.random() * 5 + 1) * CELL_SIZE + GAP_SIZE
       this.enemies.push(new Enemy(verticalPosition))
-      this.enemiesPositions.push(verticalPosition)
+      this.enemyPositions.push(verticalPosition)
       if (this.enemiesInterval > 120) this.enemiesInterval -= 50
     }
   }
 
   handleControlBar() {
     controlBar.draw(this.score, this.scoreToWin, this.resourcesCount)
+  }
+
+  handleDefenders() {
+    for (let i = 0; i < this.defenders.length; i++) {
+      const defender = this.defenders[i]
+      defender.draw()
+
+      for (let j = 0; j < this.enemies.length; j++) {
+        const enemy = this.enemies[j]
+        if (defender && Physics.detectCollision(defender, enemy)) {
+          enemy.movement = 0
+          defender.health -= 0.2
+        }
+        if (defender && defender.health <= 0) {
+          this.defenders.splice(i, 1)
+          i--
+          enemy.movement = enemy.speed
+        }
+      }
+    }
   }
 
   handleEnemies() {
@@ -85,8 +127,8 @@ export class GameState {
         this.floatingMessages.push(
           new FloatingMessage(`+${gainedResources}`, enemy.x, enemy.y, 30, 'black')
         )
-        const index = this.enemiesPositions.indexOf(enemy.y)
-        this.enemiesPositions.splice(index, 1)
+        const index = this.enemyPositions.indexOf(enemy.y)
+        this.enemyPositions.splice(index, 1)
         this.enemies.splice(i, 1)
         this.checkGameWon(this.score >= this.scoreToWin && this.enemies.length === 0)
         i--
