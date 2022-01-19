@@ -16,6 +16,7 @@ export class Game {
     if (this.state) {
       this.state.updateFrame()
       this.state.handleControlBar()
+      this.state.handleResources()
     }
   }
 }

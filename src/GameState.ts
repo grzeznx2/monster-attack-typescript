@@ -2,6 +2,8 @@ import { controlBar } from './ControlBar'
 import { Defender } from './Defender'
 import { Enemy } from './Enemy'
 import { FloatingMessage } from './FloatingMessage'
+import { mouse } from './MouseController'
+import { Physics } from './Physics'
 import { Resource } from './Resource'
 
 export enum GameStatus {
@@ -34,5 +36,37 @@ export class GameState {
 
   updateFrame() {
     this.frame++
+  }
+
+  handleResources() {
+    if (this.frame % 100 === 0 && this.score < this.scoreToWin) {
+      this.resources.push(new Resource())
+    }
+
+    for (let i = 0; i < this.resources.length; i++) {
+      this.resources[i].draw()
+      if (
+        this.resources[i] &&
+        mouse.x &&
+        mouse.y &&
+        Physics.detectCollision(this.resources[i], mouse)
+      ) {
+        this.resourcesCount += this.resources[i].amount
+        this.floatingMessages.push(
+          new FloatingMessage(
+            `+${this.resources[i].amount}`,
+            this.resources[i].x,
+            this.resources[i].y,
+            30,
+            'black'
+          )
+        )
+        this.floatingMessages.push(
+          new FloatingMessage(`+${this.resources[i].amount}`, 250, 50, 30, 'gold')
+        )
+        this.resources.splice(i, 1)
+        i--
+      }
+    }
   }
 }
