@@ -1,4 +1,4 @@
-import { canvas, CANVAS_WIDTH } from './Canvas.js'
+import { canvas, CANVAS_WIDTH } from './Canvas'
 import { CELL_SIZE } from './Cell'
 
 export class ControlBar {
