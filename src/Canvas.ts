@@ -51,5 +51,9 @@ export class Canvas extends Common<HTMLCanvasElement> {
   private setPosition() {
     this.position = this.element?.getBoundingClientRect()
   }
+
+  clearAll() {
+    this.ctx?.clearRect(0, 0, this.width, this.height)
+  }
 }
 export const canvas = new Canvas()
