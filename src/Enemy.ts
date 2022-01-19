@@ -45,6 +45,10 @@ export class Enemy {
     this.move({ deltaX: -this.movement })
   }
 
+  get amountOfResources() {
+    return Math.floor(this.maxHealth / 10)
+  }
+
   get shouldBeRemoved() {
     return this.health <= 0
   }

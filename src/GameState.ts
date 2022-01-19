@@ -1,3 +1,4 @@
+import { CELL_SIZE, GAP_SIZE } from './Cell'
 import { controlBar } from './ControlBar'
 import { Defender } from './Defender'
 import { Enemy } from './Enemy'
@@ -30,12 +31,53 @@ export class GameState {
     this.enemiesInterval = enemiesInterval
   }
 
+  get timeForEnemy() {
+    return this.frame % this.enemiesInterval === 0
+  }
+
+  get scoreToLow() {
+    return this.score < this.scoreToWin
+  }
+
+  get shouldProduceEnemy() {
+    return this.timeForEnemy && this.scoreToLow
+  }
+
   handleControlBar() {
     controlBar.draw(this.score, this.scoreToWin, this.resourcesCount)
   }
 
-  updateFrame() {
-    this.frame++
+  handleEnemies() {
+    for (let i = 0; i < this.enemies.length; i++) {
+      const enemy = this.enemies[i]
+      enemy.update()
+      enemy.draw()
+      if (Physics.detectCollision(mouse, enemy)) {
+        enemy.health = 0
+      }
+      if (enemy.x <= 0) this.status = GameStatus.Lost
+      if (enemy.health <= 0) {
+        const gainedResources = enemy.amountOfResources
+        this.floatingMessages.push(new FloatingMessage(`+${gainedResources}`, 250, 50, 30, 'gold'))
+        this.resourcesCount += gainedResources
+        this.score += gainedResources
+        this.floatingMessages.push(
+          new FloatingMessage(`+${gainedResources}`, enemy.x, enemy.y, 30, 'black')
+        )
+        const index = this.enemiesPositions.indexOf(enemy.y)
+        this.enemiesPositions.splice(index, 1)
+        this.enemies.splice(i, 1)
+        if (this.score >= this.scoreToWin && this.enemies.length === 0) this.status = GameStatus.Won
+        i--
+      }
+    }
+
+    if (this.shouldProduceEnemy) {
+      const verticalPosition = Math.floor(Math.random() * 5 + 1) * CELL_SIZE + GAP_SIZE
+      this.enemies.push(new Enemy(verticalPosition))
+      this.enemiesPositions.push(verticalPosition)
+      if (this.enemiesInterval > 120) this.enemiesInterval -= 50
+    }
   }
 
   handleResources() {
@@ -80,5 +122,8 @@ export class GameState {
         i--
       }
     }
+  }
+  updateFrame() {
+    this.frame++
   }
 }

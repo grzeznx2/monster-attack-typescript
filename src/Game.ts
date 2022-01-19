@@ -18,6 +18,7 @@ export class Game {
       this.state.handleControlBar()
       this.state.handleResources()
       this.state.handleFloatingMessages()
+      this.state.handleEnemies()
     }
   }
 }
