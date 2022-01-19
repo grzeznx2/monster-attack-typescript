@@ -35,12 +35,12 @@ export class GameState {
     return this.frame % this.enemiesInterval === 0
   }
 
-  get scoreToLow() {
+  get scoreTooLow() {
     return this.score < this.scoreToWin
   }
 
   get shouldProduceEnemy() {
-    return this.timeForEnemy && this.scoreToLow
+    return this.timeForEnemy && this.scoreTooLow
   }
 
   checkGameOver(condition: boolean) {
