@@ -55,5 +55,22 @@ export class Canvas extends Common<HTMLCanvasElement> {
   clearAll() {
     this.ctx?.clearRect(0, 0, this.width, this.height)
   }
+
+  write(
+    value: string,
+    {
+      fillStyle,
+      fontSize,
+      font,
+      x,
+      y,
+    }: { fillStyle: string; fontSize: number; font: string; x: number; y: number }
+  ) {
+    if (canvas.ctx) {
+      canvas.ctx.fillStyle = fillStyle
+      canvas.ctx.font = `${fontSize}px ${font}`
+      canvas.ctx.fillText(value, x, y)
+    }
+  }
 }
 export const canvas = new Canvas()
