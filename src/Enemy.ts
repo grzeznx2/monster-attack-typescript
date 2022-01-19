@@ -24,4 +24,28 @@ export class Enemy {
       canvas.ctx.fillText(`${Math.floor(this.health)}`, this.x + 15, this.y + 30)
     }
   }
+
+  private updateHealth(value: number) {
+    this.health += value
+  }
+
+  move({ deltaX, deltaY }: { deltaX?: number; deltaY?: number }) {
+    if (deltaX) this.updateX(deltaX)
+    if (deltaY) this.updateY(deltaY)
+  }
+  private updateX(value: number) {
+    this.x += value
+  }
+
+  private updateY(value: number) {
+    this.y += value
+  }
+
+  update() {
+    this.move({ deltaX: -this.movement })
+  }
+
+  get shouldBeRemoved() {
+    return this.health <= 0
+  }
 }
