@@ -1,3 +1,8 @@
+export interface Level {
+  scoreToWin: number
+  enemiesInterval: number
+}
+
 export interface Position {
   x: number
   y: number
