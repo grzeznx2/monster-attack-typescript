@@ -43,6 +43,29 @@ export class GameState {
     return this.timeForEnemy && this.scoreToLow
   }
 
+  checkGameOver(condition: boolean) {
+    if (condition) this.status = GameStatus.Lost
+  }
+
+  checkGameWon(condition: boolean) {
+    if (condition) this.status = GameStatus.Won
+  }
+
+  private gainResources(amount: number) {
+    this.floatingMessages.push(new FloatingMessage(`+${amount}`, 250, 50, 30, 'gold'))
+    this.resourcesCount += amount
+    this.score += amount
+  }
+
+  private handleEnemyCreation() {
+    if (this.shouldProduceEnemy) {
+      const verticalPosition = Math.floor(Math.random() * 5 + 1) * CELL_SIZE + GAP_SIZE
+      this.enemies.push(new Enemy(verticalPosition))
+      this.enemiesPositions.push(verticalPosition)
+      if (this.enemiesInterval > 120) this.enemiesInterval -= 50
+    }
+  }
+
   handleControlBar() {
     controlBar.draw(this.score, this.scoreToWin, this.resourcesCount)
   }
@@ -55,29 +78,22 @@ export class GameState {
       if (Physics.detectCollision(mouse, enemy)) {
         enemy.health = 0
       }
-      if (enemy.x <= 0) this.status = GameStatus.Lost
-      if (enemy.health <= 0) {
+      this.checkGameOver(enemy.x <= 0)
+      if (enemy.shouldBeRemoved) {
         const gainedResources = enemy.amountOfResources
-        this.floatingMessages.push(new FloatingMessage(`+${gainedResources}`, 250, 50, 30, 'gold'))
-        this.resourcesCount += gainedResources
-        this.score += gainedResources
+        this.gainResources(gainedResources)
         this.floatingMessages.push(
           new FloatingMessage(`+${gainedResources}`, enemy.x, enemy.y, 30, 'black')
         )
         const index = this.enemiesPositions.indexOf(enemy.y)
         this.enemiesPositions.splice(index, 1)
         this.enemies.splice(i, 1)
-        if (this.score >= this.scoreToWin && this.enemies.length === 0) this.status = GameStatus.Won
+        this.checkGameWon(this.score >= this.scoreToWin && this.enemies.length === 0)
         i--
       }
     }
 
-    if (this.shouldProduceEnemy) {
-      const verticalPosition = Math.floor(Math.random() * 5 + 1) * CELL_SIZE + GAP_SIZE
-      this.enemies.push(new Enemy(verticalPosition))
-      this.enemiesPositions.push(verticalPosition)
-      if (this.enemiesInterval > 120) this.enemiesInterval -= 50
-    }
+    this.handleEnemyCreation()
   }
 
   handleResources() {
