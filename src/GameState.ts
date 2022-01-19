@@ -31,4 +31,8 @@ export class GameState {
   handleControlBar() {
     controlBar.draw(this.score, this.scoreToWin, this.resourcesCount)
   }
+
+  updateFrame() {
+    this.frame++
+  }
 }

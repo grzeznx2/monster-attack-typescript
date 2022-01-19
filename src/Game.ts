@@ -14,6 +14,7 @@ export class Game {
     canvas.clearAll()
     grid.draw()
     if (this.state) {
+      this.state.updateFrame()
       this.state.handleControlBar()
     }
   }
