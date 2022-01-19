@@ -69,4 +69,16 @@ export class GameState {
       }
     }
   }
+
+  handleFloatingMessages() {
+    for (let i = 0; i < this.floatingMessages.length; i++) {
+      const message = this.floatingMessages[i]
+      message.update()
+      message.draw()
+      if (message.shouldBeRemoved) {
+        this.floatingMessages.splice(i, 1)
+        i--
+      }
+    }
+  }
 }

@@ -17,6 +17,7 @@ export class Game {
       this.state.updateFrame()
       this.state.handleControlBar()
       this.state.handleResources()
+      this.state.handleFloatingMessages()
     }
   }
 }

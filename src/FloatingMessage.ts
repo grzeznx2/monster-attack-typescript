@@ -51,4 +51,8 @@ export class FloatingMessage {
     if (deltaX) this.updateX(deltaX)
     if (deltaY) this.updateY(deltaY)
   }
+
+  get shouldBeRemoved() {
+    return this.health <= 0
+  }
 }
