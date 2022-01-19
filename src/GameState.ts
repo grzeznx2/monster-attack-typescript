@@ -1,4 +1,4 @@
-import { canvas } from './Canvas'
+import { canvas, CANVAS_WIDTH } from './Canvas'
 import { CELL_SIZE, GAP_SIZE } from './Cell'
 import { controlBar } from './ControlBar'
 import { Defender } from './Defender'
@@ -6,6 +6,7 @@ import { Enemy } from './Enemy'
 import { FloatingMessage } from './FloatingMessage'
 import { mouse } from './MouseController'
 import { Physics } from './Physics'
+import { Projectile } from './Projectile'
 import { Resource } from './Resource'
 
 export enum GameStatus {
@@ -20,6 +21,7 @@ export class GameState {
   enemiesInterval: number
   enemyPositions: number[] = []
   floatingMessages: FloatingMessage[] = []
+  projectiles: Projectile[] = []
   resources: Resource[] = []
   resourcesCount: number = 0
   score: number = 0
@@ -95,7 +97,18 @@ export class GameState {
   handleDefenders() {
     for (let i = 0; i < this.defenders.length; i++) {
       const defender = this.defenders[i]
+      defender.update()
       defender.draw()
+
+      if (this.enemyPositions.indexOf(defender.y) !== -1) {
+        defender.seesEnemy = true
+      } else {
+        defender.seesEnemy = false
+      }
+
+      if (defender.shouldShoot) {
+        this.projectiles.push(new Projectile(defender.x + CELL_SIZE, defender.y + CELL_SIZE / 2))
+      }
 
       for (let j = 0; j < this.enemies.length; j++) {
         const enemy = this.enemies[j]
@@ -108,6 +121,28 @@ export class GameState {
           i--
           enemy.movement = enemy.speed
         }
+      }
+    }
+  }
+
+  handleProjectiles() {
+    for (let i = 0; i < this.projectiles.length; i++) {
+      const projectile = this.projectiles[i]
+      projectile.update()
+      projectile.draw()
+
+      for (let j = 0; j < this.enemies.length; j++) {
+        const enemy = this.enemies[j]
+        if (enemy && projectile && Physics.detectCollision(projectile, enemy)) {
+          enemy.health -= projectile.power
+          this.projectiles.splice(i, 1)
+          i--
+        }
+      }
+
+      if (projectile && projectile.x > CANVAS_WIDTH - CELL_SIZE) {
+        this.projectiles.splice(i, 1)
+        i--
       }
     }
   }

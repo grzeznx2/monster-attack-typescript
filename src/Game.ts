@@ -20,6 +20,7 @@ export class Game {
       this.state.handleFloatingMessages()
       this.state.handleDefenders()
       this.state.handleEnemies()
+      this.state.handleProjectiles()
     }
   }
 }
