@@ -29,9 +29,9 @@ export class Game {
         requestAnimationFrame(() => this.animate())
       } else if (this.state.status === GameStatus.Won) {
         this.currentLevel++
-        mainMenu.showNextLevelMenu()
+        mainMenu.handleLevelWon()
       } else if (this.state.status === GameStatus.Lost) {
-        mainMenu.showGameLostMenu()
+        mainMenu.handleLevelLost()
       }
     }
   }
