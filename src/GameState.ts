@@ -134,14 +134,16 @@ export class GameState {
 
         for (let j = 0; j < this.enemies.length; j++) {
           const enemy = this.enemies[j]
-          if (enemy && projectile && Physics.detectCollision(projectile, enemy)) {
+          if (enemy && Physics.detectCollision(projectile, enemy)) {
             enemy.updateHealth(-projectile.power)
-            this.projectiles.splice(i, 1)
-            i--
+            projectile.kill()
           }
         }
 
-        if (projectile && projectile.x > CANVAS_WIDTH - CELL_SIZE) {
+        if (projectile.x > CANVAS_WIDTH - CELL_SIZE) {
+          projectile.kill()
+        }
+        if (projectile.shouldBeRemoved) {
           this.projectiles.splice(i, 1)
           i--
         }

@@ -1,20 +1,25 @@
 import { canvas } from './Canvas'
+import { Entity } from './Entity'
 
-export class Projectile {
-  height: number = 10
+export class Projectile extends Entity {
   power: number = 20
-  speed: number = 5
-  width: number = 10
-  x: number
-  y: number
+  protected _maxSpeed: number = 5
+  protected _currentSpeed: number = this._maxSpeed
+  protected _maxHealth: number = 1
+  protected _health: number = this._maxHealth
+  protected _width: number = 10
+  protected _height: number = 10
+  protected _x: number
+  protected _y: number
 
   constructor(x: number, y: number) {
-    this.x = x
-    this.y = y
+    super()
+    this._x = x
+    this._y = y
   }
 
   update() {
-    this.x += this.speed
+    this.move({ deltaX: +this.currentSpeed })
   }
 
   draw() {
