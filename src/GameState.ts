@@ -128,21 +128,23 @@ export class GameState {
   handleProjectiles() {
     for (let i = 0; i < this.projectiles.length; i++) {
       const projectile = this.projectiles[i]
-      projectile.update()
-      projectile.draw()
+      if (projectile) {
+        projectile.update()
+        projectile.draw()
 
-      for (let j = 0; j < this.enemies.length; j++) {
-        const enemy = this.enemies[j]
-        if (enemy && projectile && Physics.detectCollision(projectile, enemy)) {
-          enemy.health -= projectile.power
+        for (let j = 0; j < this.enemies.length; j++) {
+          const enemy = this.enemies[j]
+          if (enemy && projectile && Physics.detectCollision(projectile, enemy)) {
+            enemy.health -= projectile.power
+            this.projectiles.splice(i, 1)
+            i--
+          }
+        }
+
+        if (projectile && projectile.x > CANVAS_WIDTH - CELL_SIZE) {
           this.projectiles.splice(i, 1)
           i--
         }
-      }
-
-      if (projectile && projectile.x > CANVAS_WIDTH - CELL_SIZE) {
-        this.projectiles.splice(i, 1)
-        i--
       }
     }
   }
