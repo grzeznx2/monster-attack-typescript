@@ -10,13 +10,14 @@ body {
   position: relative;
   height: 100vh;
   background-color: black;
+  font-family: 'Orbitron';
 }
 
 .button {
+  font-family: 'Orbitron';
   color: blue;
   border: 1px solid blue;
   padding: 1rem 2rem;
-  font-family: 'Orbitron';
   cursor: pointer;
 }
 
@@ -34,6 +35,13 @@ body {
   transform: translate(-50%, -50%);
   width: 900px;
   height: 600px;
+}
+
+.game-status {
+  display: block;
+  padding: 1rem 0;
+  font-size: 2rem;
+  text-align: center;
 }
 
 .hidden {
