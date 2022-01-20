@@ -114,7 +114,7 @@ export class GameState {
         const enemy = this.enemies[j]
         if (defender && Physics.detectCollision(defender, enemy)) {
           enemy.stop()
-          defender.health -= 0.2
+          defender.updateHealth(-0.2)
         }
         if (defender && defender.health <= 0) {
           this.defenders.splice(i, 1)
