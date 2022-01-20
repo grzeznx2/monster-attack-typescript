@@ -181,28 +181,23 @@ export class GameState {
     }
 
     for (let i = 0; i < this.resources.length; i++) {
-      this.resources[i].draw()
-      if (
-        this.resources[i] &&
-        mouse.x &&
-        mouse.y &&
-        Physics.detectCollision(this.resources[i], mouse)
-      ) {
-        this.resourcesCount += this.resources[i].amount
-        this.floatingMessages.push(
-          new FloatingMessage(
-            `+${this.resources[i].amount}`,
-            this.resources[i].x,
-            this.resources[i].y,
-            30,
-            'black'
+      const resource = this.resources[i]
+      if (resource) {
+        resource.draw()
+        if (Physics.detectCollision(resource, mouse)) {
+          resource.kill()
+        }
+        if (resource.shouldBeRemoved) {
+          this.resourcesCount += resource.amount
+          this.floatingMessages.push(
+            new FloatingMessage(`+${resource.amount}`, resource.x, resource.y, 30, 'black')
           )
-        )
-        this.floatingMessages.push(
-          new FloatingMessage(`+${this.resources[i].amount}`, 250, 50, 30, 'gold')
-        )
-        this.resources.splice(i, 1)
-        i--
+          this.floatingMessages.push(
+            new FloatingMessage(`+${resource.amount}`, 250, 50, 30, 'gold')
+          )
+          this.resources.splice(i, 1)
+          i--
+        }
       }
     }
   }
