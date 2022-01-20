@@ -113,13 +113,13 @@ export class GameState {
       for (let j = 0; j < this.enemies.length; j++) {
         const enemy = this.enemies[j]
         if (defender && Physics.detectCollision(defender, enemy)) {
-          enemy.movement = 0
+          enemy.stop()
           defender.health -= 0.2
         }
         if (defender && defender.health <= 0) {
           this.defenders.splice(i, 1)
           i--
-          enemy.movement = enemy.speed
+          enemy.go()
         }
       }
     }
@@ -135,7 +135,7 @@ export class GameState {
         for (let j = 0; j < this.enemies.length; j++) {
           const enemy = this.enemies[j]
           if (enemy && projectile && Physics.detectCollision(projectile, enemy)) {
-            enemy.health -= projectile.power
+            enemy.updateHealth(-projectile.power)
             this.projectiles.splice(i, 1)
             i--
           }
@@ -155,7 +155,7 @@ export class GameState {
       enemy.update()
       enemy.draw()
       if (Physics.detectCollision(mouse, enemy)) {
-        enemy.health = 0
+        enemy.kill()
       }
       this.checkGameOver(enemy.x <= 0)
       if (enemy.shouldBeRemoved) {
